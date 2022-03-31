@@ -18,6 +18,21 @@ end
 load(filename);
 
 wine_array = table2array(wine);
+totalRow = size(wine_array,1);
+
+dataReserve = 1 - dataMissing;
+reservedNumber = uint16(totalRow * dataReserve);
+missingNumber = totalRow - reservedNumber;
+
+missingIndex = randperm(totalRow,missingNumber);
+
+wine_reserved_array = [];
+wine_missing_array = [];
+
+for i = 1 : totalRow
+    isExist = find(missingIndex == )
+
+
 wine_table_label=wine(:,1);
 wine_table_data=wine(:,2:end);
 wine_label=table2array(wine_table_label);
