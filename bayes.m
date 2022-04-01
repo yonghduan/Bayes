@@ -69,6 +69,9 @@ end
 %使用测试集测试
 %分别计算在y1，y2，y3下的概率，
 %首先使用全集开始测试
+
+
+
 predictData=wine_array;
 rowNumber = size(wine_array,1);
 errorCount = 0;
@@ -80,9 +83,9 @@ for row = 1 : rowNumber
     P_xy3=1;
     
     for i=1:attributeNumber
-        P_xy1=P_xy1 * normpdf(predictData(row,i),probability_1(1,i),probability_1(2,i));
-        P_xy2=P_xy2 * normpdf(predictData(row,i),probability_2(1,i),probability_2(2,i));
-        P_xy3=P_xy3 * normpdf(predictData(row,i),probability_3(1,i),probability_3(2,i));
+        P_xy1=P_xy1 * normpdf(predictData(row,i+1),probability_1(1,i),probability_1(2,i));
+        P_xy2=P_xy2 * normpdf(predictData(row,i+1),probability_2(1,i),probability_2(2,i));
+        P_xy3=P_xy3 * normpdf(predictData(row,i+1),probability_3(1,i),probability_3(2,i));
     end
     
     P_xy1P_y1=P_xy1 * P_y1;
@@ -108,6 +111,6 @@ for row = 1 : rowNumber
     end
 end
 
-accurate = errorCount / rowNumber;
+accurate = (rowNumber - errorCount ) / rowNumber;
 disp("accurate = " + accurate);
 end

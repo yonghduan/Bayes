@@ -3,7 +3,7 @@ function accurate = bayes(mleORem,dataMissing,filename)
 if nargin < 1
     filename = 'wine.mat';
     mleORem = true; %true代表mle
-    dataMissing = 0.1;
+    dataMissing = 0.91z;
 end
 
 if nargin == 1
@@ -59,9 +59,9 @@ reserved_Probability_2 = zeros(2,attributeNumber);
 reserved_Probability_3 = zeros(2,attributeNumber);
 
 reserved_classification1_array = wine_reserved_array(1:reserved_flag_1,:);
-reserved_classification2_array = wine_reserved_array(reserved_flag_1+1:reserved_flag_1+reserved_flag_2,:);
-reserved_classification3_array = wine_reserved_array(reserved_flag_1+ reserved_flag_2+1: ...
-    reserved_flag_1+reserved_flag_2+reserved_flag_3,:);
+reserved_classification2_array = wine_reserved_array((reserved_flag_1+1):(reserved_flag_1+reserved_flag_2),:);
+reserved_classification3_array = wine_reserved_array((reserved_flag_1+ reserved_flag_2+1): ...
+    (reserved_flag_1+reserved_flag_2+reserved_flag_3),:);
 
 for i=1:3
     for j=1:attributeNumber
@@ -73,14 +73,14 @@ for i=1:3
        end
 
        if i==2
-           data=wine_reserved_data(reserved_flag_1+1:reserved_flag_1+reserved_flag_2,j);
+           data=wine_reserved_data((reserved_flag_1+1):(reserved_flag_1+reserved_flag_2),j);
            [mu,sigma] = normfit(data);
            reserved_Probability_2(1,j)= mu;
            reserved_Probability_2(2,j) = sigma;
        end
 
        if i==3
-           data=wine_reserved_data(reserved_flag_1+ reserved_flag_2+1 : reserved_flag_1+reserved_flag_2+reserved_flag_3,j);
+           data=wine_reserved_data((reserved_flag_1+ reserved_flag_2+1) : (reserved_flag_1+reserved_flag_2+reserved_flag_3),j);
            [mu,sigma] = normfit(data);
            reserved_Probability_3(1,j)= mu;
            reserved_Probability_3(2,j) = sigma;
@@ -170,14 +170,16 @@ end
 %使用测试集测试
 %分别计算在y1，y2，y3下的概率，
 %首先使用全集开始测试
-predictData=[reserved_classification1_array;reserved_classification2_array;reserved_classification3_array];
+predictData=wine_array;
 rowNumber = size(predictData,1);
 errorCount = 0;
 
- reservedTotalNumber = reserved_flag_1 + reserved_flag_2 + reserved_flag_3;
- P_y1 = reserved_flag_1 / reservedTotalNumber / 100;
- P_y2 = reserved_flag_2 / reservedTotalNumber / 100;
- P_y3 = reserved_flag_3 / reservedTotalNumber / 100;
+wine_label = wine_array(:,1);
+lableProbability = tabulate(wine_label);
+
+P_y1 = lableProbability(1,3) / 100;
+P_y2 = lableProbability(2,3) / 100;
+P_y3 = lableProbability(3,3) / 100;
 
 
 for row = 1 : rowNumber
@@ -187,9 +189,9 @@ for row = 1 : rowNumber
     P_xy3=1;
     
     for i=1:attributeNumber
-        P_xy1=P_xy1 * normpdf(predictData(row,i),reserved_Probability_1(1,i),reserved_Probability_1(2,i));
-        P_xy2=P_xy2 * normpdf(predictData(row,i),reserved_Probability_2(1,i),reserved_Probability_2(2,i));
-        P_xy3=P_xy3 * normpdf(predictData(row,i),reserved_Probability_3(1,i),reserved_Probability_3(2,i));
+        P_xy1=P_xy1 * normpdf(predictData(row,i+1),reserved_Probability_1(1,i),reserved_Probability_1(2,i));
+        P_xy2=P_xy2 * normpdf(predictData(row,i+1),reserved_Probability_2(1,i),reserved_Probability_2(2,i));
+        P_xy3=P_xy3 * normpdf(predictData(row,i+1),reserved_Probability_3(1,i),reserved_Probability_3(2,i));
     end
     
     P_xy1P_y1=P_xy1 * P_y1;
@@ -215,6 +217,6 @@ for row = 1 : rowNumber
     end
 end
 
-accurate = errorCount / rowNumber;
+accurate = (rowNumber - errorCount) / rowNumber;
 disp("accurate = " + accurate);
 end
