@@ -3,7 +3,7 @@ function accurate = bayes(mleORem,dataMissing,filename)
 if nargin < 1
     filename = 'wine.mat';
     mleORem = true; %true代表mle
-    dataMissing = 0.91z;
+    dataMissing = 0.1;
 end
 
 if nargin == 1
@@ -95,9 +95,9 @@ end
 predictData = wine_missing_data;
 for row = 1 : missingNumber
     resevedTotalNumber = reserved_flag_1 + reserved_flag_2 + reserved_flag_3;
-    P_y1 = reserved_flag_1 / resevedTotalNumber / 100;
-    P_y2 = reserved_flag_2 / resevedTotalNumber / 100;
-    P_y3 = reserved_flag_3 / resevedTotalNumber / 100;
+    P_y1 = reserved_flag_1 / resevedTotalNumber;
+    P_y2 = reserved_flag_2 / resevedTotalNumber;
+    P_y3 = reserved_flag_3 / resevedTotalNumber;
 
 
     P_xy1=1;
@@ -177,9 +177,10 @@ errorCount = 0;
 wine_label = wine_array(:,1);
 lableProbability = tabulate(wine_label);
 
-P_y1 = lableProbability(1,3) / 100;
-P_y2 = lableProbability(2,3) / 100;
-P_y3 = lableProbability(3,3) / 100;
+reserveTotal = reserved_flag_3 + reserved_flag_2 + reserved_flag_1;
+P_y1 = reserved_flag_1 / reserveTotal;
+P_y2 = reserved_flag_2 / reserveTotal;
+P_y3 = reserved_flag_3 / reserveTotal;
 
 
 for row = 1 : rowNumber
